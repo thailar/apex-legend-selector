@@ -12,6 +12,8 @@ struct Legend_Select: View {
     @State var chosenLegend = " "
     @State var legendImage = "apexlogo"
     @State var legendPadding = 50.0
+    @State var ashSelected = false
+    @State var ashColor = Color.clear // need to set array for these, rename to P1color and create func to pass in the legends in the buttons
     
     var legends:[String] = [
         "Ash", "Ballistic", "Bangalore", "Bloodhound",
@@ -44,8 +46,29 @@ struct Legend_Select: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
                     .clipped()
-                
                 VStack {
+                    //All Legends display/select
+                    HStack {
+                        Button(action: {
+                            ashSelected.toggle()
+                            if ashSelected {
+                                ashColor = Color.green
+                            }
+                            else {
+                                ashColor = Color.clear
+                            }
+                        }) {
+                            Image("Ash")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: geometry.size.width/5)
+                        }
+                        .background(Rectangle().fill(Color.gray))
+                        .background(Rectangle().stroke(lineWidth: 10).fill(ashColor))
+                    }
+                    HStack {
+                        
+                    }
                     Image(legendImage)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
