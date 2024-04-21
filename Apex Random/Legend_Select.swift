@@ -24,15 +24,15 @@ struct Legend_Select: View {
     ]
     
     func rollLegend() {
-        chosenLegend = legends.randomElement() ?? ""
-        if !chosenLegend.isEmpty {
-            legendImage = chosenLegend
-            legendPadding = 0
+        if let rolled = legends.randomElement() {
+            chosenLegend = rolled
+            legendImage = rolled
+            legendPadding = 0.0
         }
-        else
-        {
+        else {
+            chosenLegend = " "
             legendImage = "apexlogo"
-            legendPadding = 0
+            legendPadding = 50.0
         }
     }
     
