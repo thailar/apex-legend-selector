@@ -32,6 +32,7 @@ struct Legend_Select: View {
         else
         {
             legendImage = "apexlogo"
+            legendPadding = 0
         }
     }
     
