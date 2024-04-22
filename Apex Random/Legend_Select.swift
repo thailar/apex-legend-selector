@@ -7,13 +7,18 @@
 
 import SwiftUI
 
-struct Legend {
+struct Legend: Identifiable {
     let legendName: String
     var selectedByPlayer = 0
     var P1Selected = false
     var P2Selected = false
     var P3Selected = false
     var selectionColor = Color.clear
+    var id:String
+    init (name: String) {
+        self.legendName = name
+        self.id = name
+    }
     
     mutating func tap() {
         print("tapped \(legendName)")
@@ -41,19 +46,17 @@ var legendNames = [
 ]
 
 struct Legend_Select: View {
-
     @State var legends:[Legend] = {
-        var legC:[Legend] = []
+        var legendsCollection:[Legend] = []
         for i in legendNames {
-            legC.append(Legend(legendName: i))
+            legendsCollection.append(Legend(name: i))
         }
-        return legC
+        return legendsCollection
     }()
     
     @State var chosenLegend = " "
     @State var legendImage = "apexlogo"
     @State var legendPadding = 50.0
-    @State var colorC:[Color] = [.red, .blue, .yellow, .green, .cyan]
     
     func rollLegend() {
         if let rolled = legendNames.randomElement() {
@@ -68,7 +71,7 @@ struct Legend_Select: View {
         }
     }
     
-    func buildRow(first: Int) -> some View {
+    func buildLegendsRow(first: Int) -> some View {
         return HStack {
             ForEach(first...first+4, id: \.self) { legend in
                 Button(action: {
@@ -86,44 +89,47 @@ struct Legend_Select: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Image("banner")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
-                    .clipped()
+            VStack {
                 VStack {
                     //All Legends display/select
-                    VStack {
-                        buildRow(first: 0).padding(.trailing)
-                        buildRow(first: 5).padding(.leading)
-                        buildRow(first: 10).padding(.trailing)
-                        buildRow(first: 15).padding(.leading)
-                        buildRow(first: 20).padding(.trailing)
-                    }.padding()
-                    Spacer()
-                    Image(legendImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: geometry.size.width/2, maxHeight: geometry.size.width/2)
-                        //.padding(legendPadding)
-                    Text(chosenLegend)
-                        .font(.title)
-                    Button(action: {
-                        rollLegend()
-                    }) {
-                            Text("Generate Random Legend")
-                            .font(.title3.bold())
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .padding()
-                    .background(Color.teal)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                    /*ForEach(legends) { legend in
+                        /*@START_MENU_TOKEN@*/Text(legend.legendName)/*@END_MENU_TOKEN@*/
+                    }*/     // Pick up here now that Legends are Identifiable
+                    buildLegendsRow(first: 0).padding(.trailing)
+                    buildLegendsRow(first: 5).padding(.leading)
+                    buildLegendsRow(first: 10).padding(.trailing)
+                    buildLegendsRow(first: 15).padding(.leading)
+                    buildLegendsRow(first: 20).padding(.trailing)
                 }
+                .padding()
+                Spacer()
+                Image(legendImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: geometry.size.width/2, maxHeight: geometry.size.width/2)
+                //.padding(legendPadding)
+                Text(chosenLegend)
+                    .font(.title)
+                Button(action: {
+                    rollLegend()
+                }) {
+                    Text("Generate Random Legend")
+                        .font(.title3.bold())
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding()
+                .background(Color.teal)
+                .foregroundColor(.white)
+                .cornerRadius(8)
             }
         }
+        .background(Image("banner")
+            .resizable()
+            .scaledToFill()
+        )
+        .background(Color.gray.opacity(0.35))
     }
+        
 }
 
 #Preview {
