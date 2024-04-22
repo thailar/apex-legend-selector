@@ -72,17 +72,19 @@ struct Legend_Select: View {
     }
     
     func buildLegendsRow(first: Int) -> some View {
+        let last = legends.count-5-first
         return HStack {
-            ForEach(first...first+4, id: \.self) { legend in
+            ForEach(legends.indices.dropFirst(first).dropLast(last), id: \.self) { index in
                 Button(action: {
-                    legends[legend].tap()
+                    legends[index].tap()
                 }) {
-                    Image(legends[legend].legendName)
+                    Image(legends[index].legendName)
                         .resizable()
                 }
                 .scaledToFit()
                 .background(Rectangle().fill(Color.gray))
-                .background(Rectangle().stroke(lineWidth: 10).fill(legends[legend].selectionColor))
+                .background(Rectangle().stroke(lineWidth: 10).fill(legends[index].selectionColor))
+                
             }
         }
     }
@@ -92,14 +94,16 @@ struct Legend_Select: View {
             VStack {
                 VStack {
                     //All Legends display/select
-                    /*ForEach(legends) { legend in
-                        /*@START_MENU_TOKEN@*/Text(legend.legendName)/*@END_MENU_TOKEN@*/
-                    }*/     // Pick up here now that Legends are Identifiable
-                    buildLegendsRow(first: 0).padding(.trailing)
-                    buildLegendsRow(first: 5).padding(.leading)
-                    buildLegendsRow(first: 10).padding(.trailing)
-                    buildLegendsRow(first: 15).padding(.leading)
-                    buildLegendsRow(first: 20).padding(.trailing)
+                    // Needs legendRows automation and BuildLegendsRow check for out of range (26 legends). Would be nice to implement VStack into seperate function.
+                    @State var legendRows:[Int] = [0,5,10,15,20]
+                    ForEach(legendRows, id: \.self) { row in
+                        if row % 2 == 0 {
+                            buildLegendsRow(first: row).padding(.trailing)
+                        }
+                        else {
+                            buildLegendsRow(first: row).padding(.leading)
+                        }
+                    }
                 }
                 .padding()
                 Spacer()
