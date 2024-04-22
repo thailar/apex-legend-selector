@@ -41,17 +41,29 @@ struct Legend: Identifiable {
     }
 }
 
-var legendNames = [
-    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith"
+let legendNames = [
+    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith",
 ]
 
 struct Legend_Select: View {
+    
     @State var legends:[Legend] = {
         var legendsCollection:[Legend] = []
         for i in legendNames {
             legendsCollection.append(Legend(name: i))
         }
         return legendsCollection
+    }()
+    
+    let legendRowStartingPoints:[Int] = {
+    var lRows:[Int] = []
+        for i in 0...legendNames.count-1 {
+            if i % 5 == 0 {
+                lRows.append(i)
+            }
+        }
+        print(lRows)
+        return lRows
     }()
     
     @State var chosenLegend = " "
@@ -94,9 +106,9 @@ struct Legend_Select: View {
             VStack {
                 VStack {
                     //All Legends display/select
-                    // Needs legendRows automation and BuildLegendsRow check for out of range (26 legends). Would be nice to implement VStack into seperate function.
-                    @State var legendRows:[Int] = [0,5,10,15,20]
-                    ForEach(legendRows, id: \.self) { row in
+                    // Needs BuildLegendsRow check for out of range (26 legends). Would be nice to implement VStack into seperate function.
+                   
+                    ForEach(legendRowStartingPoints, id: \.self) { row in
                         if row % 2 == 0 {
                             buildLegendsRow(first: row).padding(.trailing)
                         }
