@@ -12,6 +12,7 @@
 		D460A26C2BD3696D0041578F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D460A26B2BD3696D0041578F /* Assets.xcassets */; };
 		D460A26F2BD3696D0041578F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D460A26E2BD3696D0041578F /* Preview Assets.xcassets */; };
 		D460A2782BD36C250041578F /* Legend_Select.swift in Sources */ = {isa = PBXBuildFile; fileRef = D460A2772BD36C250041578F /* Legend_Select.swift */; };
+		D49D85632BD7B59C008298EB /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49D85622BD7B59C008298EB /* test.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		D460A26B2BD3696D0041578F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D460A26E2BD3696D0041578F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D460A2772BD36C250041578F /* Legend_Select.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Legend_Select.swift; sourceTree = "<group>"; };
+		D49D85622BD7B59C008298EB /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 				D460A2672BD3696C0041578F /* Apex_RandomApp.swift */,
 				D460A2692BD3696C0041578F /* ContentView.swift */,
 				D460A2772BD36C250041578F /* Legend_Select.swift */,
+				D49D85622BD7B59C008298EB /* test.swift */,
 				D460A26B2BD3696D0041578F /* Assets.xcassets */,
 				D460A26D2BD3696D0041578F /* Preview Content */,
 			);
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D460A2782BD36C250041578F /* Legend_Select.swift in Sources */,
+				D49D85632BD7B59C008298EB /* test.swift in Sources */,
 				D460A26A2BD3696C0041578F /* ContentView.swift in Sources */,
 				D460A2682BD3696C0041578F /* Apex_RandomApp.swift in Sources */,
 			);

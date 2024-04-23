@@ -106,12 +106,12 @@ struct LegendSelect: View {
         GeometryReader { geometry in
             VStack {
                 //All Legends display/select
-                VStack (alignment: .leading, spacing: 10.0) {
+                VStack (alignment: .leading) {
                     ForEach(legendRowStartingPoints, id: \.self) { row in
                         let last = (row + 5) < (legends.count) ? (row + 5):(legends.count)
                         let tail = legends.count - last
                         let shift: Edge.Set = row % 2 == 0 ? .trailing : .leading
-                        HStack (spacing: 10.0) {
+                        HStack {
                             ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
                                 LegendButton(action: {print("action")}, imageName: "Ash")
                             }
@@ -124,7 +124,7 @@ struct LegendSelect: View {
                 Image(legendImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
+                    .frame(maxWidth: geometry.size.width/2, maxHeight: geometry.size.width/2)
                 //.padding(legendPadding)
                 Text(chosenLegend)
                     .font(.title)
@@ -140,14 +140,14 @@ struct LegendSelect: View {
                 .foregroundColor(.white)
                 .cornerRadius(8)
             }
+            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
         }
-        .background(Image("banner")
+        /*.background(Image("banner")
             .resizable()
             .scaledToFill()
         )
-        .background(Color.gray.opacity(0.35).ignoresSafeArea())
+        .background(Color.gray.opacity(0.35).ignoresSafeArea())*/
     }
-        
 }
 
 #Preview {
