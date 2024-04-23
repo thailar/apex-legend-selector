@@ -6,22 +6,16 @@
 //
 
 import SwiftUI
-
+// add button photos back and mask images inside
 struct Legend: Identifiable {
     let legendName: String
     var selectedByPlayer = 0
-    var P1Selected = false
-    var P2Selected = false
-    var P3Selected = false
     var selectionColor = Color.clear
     var id:String
-    init (name: String) {
-        self.legendName = name
-        self.id = name
-    }
     
     mutating func tap() {
-        print("tapped \(legendName)")
+        selectedByPlayer += 1
+        print("tapped \(legendName), selection moved to \(selectedByPlayer)")
         if selectedByPlayer < 3 {
             selectedByPlayer = selectedByPlayer + 1
         }
@@ -39,6 +33,11 @@ struct Legend: Identifiable {
             selectionColor = Color.clear
         }
     }
+    
+    init (name: String) {
+        self.legendName = name
+        self.id = name
+    }
 }
 
 let legendNames = [
@@ -46,21 +45,37 @@ let legendNames = [
 ]
 
 struct LegendButton: View {
-    var action: () -> ()
-    var imageName: String
-    var size: CGFloat
+    let legend:Legend
+    let imageName: String
+    let size: CGFloat
+    @State var highlight = Color.clear
+    @State var selectedByPlayer = 0
     
-    var body: some View {
-        Button(action: action) {
-            Rectangle()
-                .fill(Color.blue)
-                .frame(maxWidth: size, maxHeight: size)
+    func tap() {
+        selectedByPlayer = (selectedByPlayer + 1) % 4
+        switch selectedByPlayer {
+            case 1: highlight = Color.yellow
+            case 2: highlight = Color.blue
+            case 3: highlight = Color.green
+            default: highlight = Color.clear
         }
     }
-    init(action: @escaping () -> Void, imageName: String, size: CGFloat = 50.0) {
-        self.action = action
-        self.imageName = imageName
+    
+    var body: some View {
+        Button(action: tap) {
+            ZStack {
+                Image(imageName)
+                    .resizable()
+                    .background(Color.gray)
+                    .frame(maxWidth: size, maxHeight: size)
+                    .border(highlight, width: 3.5)
+            }
+        }
+    }
+    init(legend: Legend, size: CGFloat = 50.0) {
+        self.legend = legend
         self.size = size
+        self.imageName = legend.legendName
     }
 }
 
@@ -81,7 +96,6 @@ struct LegendSelect: View {
                 lRows.append(i)
             }
         }
-        print(lRows)
         return lRows
     }()
     
@@ -101,7 +115,7 @@ struct LegendSelect: View {
             legendPadding = 150.0
         }
     }
-    // need to implement button action in view or better yet, button struct.
+
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -113,7 +127,7 @@ struct LegendSelect: View {
                         let shift: Edge.Set = row % 2 == 0 ? .trailing : .leading
                         HStack {
                             ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
-                                LegendButton(action: {print("action")}, imageName: "Ash")
+                                LegendButton(legend: legends[index], size:60)
                             }
                         }
                         .padding(shift)
