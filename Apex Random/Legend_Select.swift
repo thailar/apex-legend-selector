@@ -42,10 +42,29 @@ struct Legend: Identifiable {
 }
 
 let legendNames = [
-    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith",
+    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Mirage"
 ]
 
-struct Legend_Select: View {
+struct LegendButton: View {
+    var action: () -> ()
+    var imageName: String
+    var size: CGFloat
+    
+    var body: some View {
+        Button(action: action) {
+            Rectangle()
+                .fill(Color.blue)
+                .frame(maxWidth: size, maxHeight: size)
+        }
+    }
+    init(action: @escaping () -> Void, imageName: String, size: CGFloat = 50.0) {
+        self.action = action
+        self.imageName = imageName
+        self.size = size
+    }
+}
+
+struct LegendSelect: View {
     
     @State var legends:[Legend] = {
         var legendsCollection:[Legend] = []
@@ -83,37 +102,29 @@ struct Legend_Select: View {
         }
     }
     
-    func buildLegendsRow(first: Int) -> some View {
-        let last = legends.count-5-first
-        return HStack {
-            ForEach(legends.indices.dropFirst(first).dropLast(last), id: \.self) { index in
-                Button(action: {
-                    legends[index].tap()
-                }) {
-                    Image(legends[index].legendName)
-                        .resizable()
-                }
-                .scaledToFit()
-                .background(Rectangle().fill(Color.gray))
-                .background(Rectangle().stroke(lineWidth: 10).fill(legends[index].selectionColor))
-                
-            }
-        }
-    }
-    
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                VStack {
-                    //All Legends display/select
-                    // Needs BuildLegendsRow check for out of range (26 legends). Would be nice to implement VStack into seperate function.
-                   
+                //All Legends display/select
+                VStack (alignment: .leading, spacing: 10.0) {
                     ForEach(legendRowStartingPoints, id: \.self) { row in
+                        let last = (row + 5) < (legends.count) ? (row + 5):(legends.count)
+                        let tail = legends.count - last
                         if row % 2 == 0 {
-                            buildLegendsRow(first: row).padding(.trailing)
+                            HStack (spacing: 10.0) {
+                                ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
+                                    LegendButton(action: {print("action")}, imageName: "Ash")
+                                }
+                            }
+                            .padding(.trailing)
                         }
                         else {
-                            buildLegendsRow(first: row).padding(.leading)
+                            HStack (spacing: 10.0) {
+                                ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
+                                    LegendButton(action: {print("action")}, imageName: "Ash")
+                                }
+                            }
+                            .padding(.leading)
                         }
                     }
                 }
@@ -122,7 +133,7 @@ struct Legend_Select: View {
                 Image(legendImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: geometry.size.width/2, maxHeight: geometry.size.width/2)
+                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
                 //.padding(legendPadding)
                 Text(chosenLegend)
                     .font(.title)
@@ -143,11 +154,11 @@ struct Legend_Select: View {
             .resizable()
             .scaledToFill()
         )
-        .background(Color.gray.opacity(0.35))
+        .background(Color.gray.opacity(0.35).ignoresSafeArea())
     }
         
 }
 
 #Preview {
-    Legend_Select()
+    LegendSelect()
 }
