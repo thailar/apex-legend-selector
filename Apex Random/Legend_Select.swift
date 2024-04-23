@@ -101,7 +101,7 @@ struct LegendSelect: View {
             legendPadding = 150.0
         }
     }
-    
+    // need to implement button action in view or better yet, button struct.
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -110,22 +110,13 @@ struct LegendSelect: View {
                     ForEach(legendRowStartingPoints, id: \.self) { row in
                         let last = (row + 5) < (legends.count) ? (row + 5):(legends.count)
                         let tail = legends.count - last
-                        if row % 2 == 0 {
-                            HStack (spacing: 10.0) {
-                                ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
-                                    LegendButton(action: {print("action")}, imageName: "Ash")
-                                }
+                        let shift: Edge.Set = row % 2 == 0 ? .trailing : .leading
+                        HStack (spacing: 10.0) {
+                            ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
+                                LegendButton(action: {print("action")}, imageName: "Ash")
                             }
-                            .padding(.trailing)
                         }
-                        else {
-                            HStack (spacing: 10.0) {
-                                ForEach(legends.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
-                                    LegendButton(action: {print("action")}, imageName: "Ash")
-                                }
-                            }
-                            .padding(.leading)
-                        }
+                        .padding(shift)
                     }
                 }
                 .padding()
