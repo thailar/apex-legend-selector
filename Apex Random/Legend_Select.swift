@@ -43,7 +43,7 @@ struct LegendButton: View {
                 .resizable()
                 .background(Color.gray)
                 .frame(maxWidth: size, maxHeight: size)
-                .border(highlight, width: 3.5)
+                .border(highlight, width: 4)
         }
     }
     init(legendName: String, selector: selectionController, size: CGFloat = 50.0) {
@@ -137,7 +137,7 @@ struct LegendSelect: View {
                 Image(legendImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: geometry.size.width/2, maxHeight: geometry.size.width/2)
+                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
                 Text(chosenLegend)
                     .font(.title)
                 Button(action: {
@@ -159,11 +159,6 @@ struct LegendSelect: View {
                         )
             .background(Color.gray.opacity(0.35).ignoresSafeArea())
         }
-        /*.background(Image("banner")
-            .resizable()
-            .scaledToFill()
-        )
-        .background(Color.gray.opacity(0.35).ignoresSafeArea())*/
     }
 }
 
