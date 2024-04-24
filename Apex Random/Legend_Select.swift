@@ -36,14 +36,18 @@ struct LegendButton: View {
             default: highlight = Color.clear
         }
     }
-    
+    // make color array for background button colors?
     var body: some View {
         Button(action: tap) {
             Image(legendName)
                 .resizable()
+                .aspectRatio(contentMode: .fill)
+                
+                .scaleEffect(1.18)
+                .frame(maxWidth: size, maxHeight: size, alignment: .top)
+                .clipped()
                 .background(Color.gray)
-                .frame(maxWidth: size, maxHeight: size)
-                .border(highlight, width: 4)
+                .border(highlight, width: 5)
         }
     }
     init(legendName: String, selector: selectionController, size: CGFloat = 50.0) {
@@ -106,7 +110,6 @@ struct LegendSelect: View {
             chosenLegend = rolled
             legendImage = rolled
             legendPadding = 0.0
-            //selector.changeNextPlayer()
         }
         else {
             chosenLegend = " "
