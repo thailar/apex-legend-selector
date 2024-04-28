@@ -7,15 +7,29 @@
 
 import SwiftUI
 
-struct test: View {
+let array = {
+    var test:[Int] = []
+    for i in 1...10 {
+        test.append(i)
+    }
+    return test
+}()
+
+let fiveLegends = {
+    array.filter{
+        ![6,8,9,10].contains($0)
+    }
+}()
+
+struct Test: View {
     var body: some View {
-        VStack {
-            Circle()
-                .frame(width: 25, height: 25) // Align circle to the trailing edge
-        }.frame(maxWidth: .infinity, alignment: .trailing)
+        ForEach(Array(fiveLegends.enumerated()), id: \.element){ index, name in
+            Text("\(name)")
+        }
     }
 }
 
 #Preview {
-    test()
+    Test()
 }
+

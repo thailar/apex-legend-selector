@@ -21,7 +21,7 @@ struct LegendButton: View {
     func tap() {
         //highlight if not selected, deselect if already selected
         
-        if selectedByPlayer == 0 /*&& selector.nextPlayer != 0  */{
+        if selectedByPlayer == 0 {
             selectedByPlayer = selector.nextPlayer
             selector.changeNextPlayer(toggledPlayer: selectedByPlayer)
         }
@@ -42,15 +42,14 @@ struct LegendButton: View {
             Image(legendName)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                
-                .scaleEffect(1.18)
-                .frame(maxWidth: size, maxHeight: size, alignment: .top)
-                .clipped()
-                .background(Color.gray)
+                .frame(maxWidth: size, maxHeight: size)
+                //.scaleEffect(0.6)
+                //.background(Color.gray)
+                //.clipped()
                 .border(highlight, width: 5)
         }
     }
-    init(legendName: String, selector: selectionController, size: CGFloat = 50.0) {
+    init(legendName: String, selector: selectionController, size: CGFloat) {
         self.size = size
         self.legendName = legendName
         self.selector = selector
@@ -85,24 +84,15 @@ class selectionController {
             nextPlayer = 0
         }
     }
-    
 }
 
 struct LegendSelect: View {
-    
-    let legendRowStartingPoints:[Int] = {
-        var lRows:[Int] = []
-        for i in 0...legendNames.count-1 {
-            if i % 5 == 0 {
-                lRows.append(i)
-            }
-        }
-        return lRows
-    }()
 
     @State var chosenLegend = " "
     @State var legendImage = "apexlogo"
     @State var legendPadding = 50.0
+    var shiftRowLeft = false
+    var shift:Edge.Set { shiftRowLeft ? .trailing : .leading }
     var selector = selectionController()
     
     func rollLegend() {
@@ -120,54 +110,52 @@ struct LegendSelect: View {
 
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Color.clear
-                                    .frame(width: geometry.size.width, height: geometry.size.height)
-                //Color.gray.opacity(0.35)
-                  //  .ignoresSafeArea()
-                Image("banner")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
-                    .ignoresSafeArea()
-                    .clipped()
-                
-                VStack {
-                    // Button creation and layout
-                    VStack (alignment: .leading) {
-                        ForEach(legendRowStartingPoints, id: \.self) { row in
-                            let last = (row + 5) < (legendNames.count) ? (row + 5):(legendNames.count)
-                            let tail = legendNames.count - last
-                            let shift: Edge.Set = row % 2 == 0 ? .trailing : .leading
+            VStack {
+                // Button creation and layout
+                VStack (alignment: .leading) {
+                    ForEach(Array(legendNames.enumerated()), id: \.element) { index, name in
+                        if index % 5 == 0 {
                             HStack {
-                                ForEach(legendNames.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
-                                    LegendButton(legendName: legendNames[index], selector: selector, size:60)
+                                ForEach(Array(legendNames[index...index+4].enumerated()), id: \.element) { column, name in
+                                    //fix this and beyond
+                                    if column <= (legendNames.count - 1) % 5 && index <= legendNames.count {
+                                        LegendButton(legendName: name, selector: selector, size:60)
+                                    }
                                 }
                             }
-                            .padding(shift)
+                            //.padding(shift)
                         }
                     }
-                    .padding()
-                    Spacer()
-                    Image(legendImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
-                    Text(chosenLegend)
-                        .font(.title)
-                    Button(action: {
-                        rollLegend()
-                    }) {
-                        Text("Generate Random Legend")
-                            .font(.title3.bold())
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .padding()
-                    .background(Color.teal)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
                 }
+
+                Spacer()
+                Image(legendImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
+                Text(chosenLegend)
+                    .font(.title)
+                Button(action: {
+                    rollLegend()
+                }) {
+                    Text("Generate Random Legend")
+                        .font(.title3.bold())
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding()
+                .background(Color.teal)
+                .foregroundColor(.white)
+                .cornerRadius(8)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(
+                Image("banner")
+                    .resizable()
+                    .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                    //.scaledToFill()
+                    .ignoresSafeArea()
+            )
+            //.background(Color.gray.opacity(0.35).ignoresSafeArea())
         }
     }
 }
