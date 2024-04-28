@@ -120,47 +120,54 @@ struct LegendSelect: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                // Button creation and layout
-                VStack (alignment: .leading) {
-                    ForEach(legendRowStartingPoints, id: \.self) { row in
-                        let last = (row + 5) < (legendNames.count) ? (row + 5):(legendNames.count)
-                        let tail = legendNames.count - last
-                        let shift: Edge.Set = row % 2 == 0 ? .trailing : .leading
-                        HStack {
-                            ForEach(legendNames.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
-                                LegendButton(legendName: legendNames[index], selector: selector, size:60)
-                            }
-                        }
-                        .padding(shift)
-                    }
-                }
-                .padding()
-                Spacer()
-                Image(legendImage)
+            ZStack {
+                Color.clear
+                                    .frame(width: geometry.size.width, height: geometry.size.height)
+                //Color.gray.opacity(0.35)
+                  //  .ignoresSafeArea()
+                Image("banner")
                     .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
-                Text(chosenLegend)
-                    .font(.title)
-                Button(action: {
-                    rollLegend()
-                }) {
-                    Text("Generate Random Legend")
-                        .font(.title3.bold())
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+                    .ignoresSafeArea()
+                    .clipped()
+                
+                VStack {
+                    // Button creation and layout
+                    VStack (alignment: .leading) {
+                        ForEach(legendRowStartingPoints, id: \.self) { row in
+                            let last = (row + 5) < (legendNames.count) ? (row + 5):(legendNames.count)
+                            let tail = legendNames.count - last
+                            let shift: Edge.Set = row % 2 == 0 ? .trailing : .leading
+                            HStack {
+                                ForEach(legendNames.indices.dropFirst(row).dropLast(tail), id: \.self) { index in
+                                    LegendButton(legendName: legendNames[index], selector: selector, size:60)
+                                }
+                            }
+                            .padding(shift)
+                        }
+                    }
+                    .padding()
+                    Spacer()
+                    Image(legendImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
+                    Text(chosenLegend)
+                        .font(.title)
+                    Button(action: {
+                        rollLegend()
+                    }) {
+                        Text("Generate Random Legend")
+                            .font(.title3.bold())
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .padding()
+                    .background(Color.teal)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
                 }
-                .buttonStyle(BorderlessButtonStyle())
-                .padding()
-                .background(Color.teal)
-                .foregroundColor(.white)
-                .cornerRadius(8)
             }
-            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-            .background(Image("banner")
-                .resizable()
-                .scaledToFill()
-                        )
-            .background(Color.gray.opacity(0.35).ignoresSafeArea())
         }
     }
 }
