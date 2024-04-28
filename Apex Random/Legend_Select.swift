@@ -14,13 +14,12 @@ let legendNames = [
 struct LegendButton: View {
     let legendName: String
     let size: CGFloat
-    @State var highlight = Color.clear
-    @State var selectedByPlayer = 0
     @Binding var nextPlayer: Int
     @Binding var playerSelected: [Bool]
-    @Binding var p1Selected: Bool
-    @Binding var p2Selected: Bool
-    @Binding var p3Selected: Bool
+    
+    @State var highlight = Color.clear
+    @State var selectedByPlayer = 0
+    
     func changeNextPlayer() {
         switch selectedByPlayer {
         case 1: playerSelected[0].toggle()
@@ -76,46 +75,17 @@ struct LegendButton: View {
 struct LegendSelect: View {
 
     @State var chosenLegend = " "
-    @State var legendImage = "apexlogo"
+    @State var legendImage = " "
     @State var legendPadding = 50.0
     @State var playerSelected = [false, false, false]
-    @State var p1Selected = false
-    @State var p2Selected = false
-    @State var p3Selected = false
     @State var nextPlayer = 1
-    
-    mutating func changeNextPlayer(toggledPlayer: Int) {
-        switch toggledPlayer {
-        case 1: p1Selected.toggle()
-        case 2: p2Selected.toggle()
-        case 3: p3Selected.toggle()
-        default: return
-        }
-        
-        if !p1Selected {
-            nextPlayer = 1
-        }
-        else if !p2Selected {
-            nextPlayer = 2
-        }
-        else if !p3Selected {
-            nextPlayer = 3
-        }
-        else {
-            nextPlayer = 0
-        }
-    }
     
     func rollLegend() {
         if let rolled = legendNames.randomElement() {
             chosenLegend = rolled
-            legendImage = rolled
-            legendPadding = 0.0
         }
         else {
             chosenLegend = " "
-            legendImage = "apexlogo"
-            legendPadding = 150.0
         }
     }
 
@@ -128,7 +98,6 @@ struct LegendSelect: View {
                     .frame(width: geometry.size.width)
                     .ignoresSafeArea()
                     .background(Color.gray.opacity(0.35))
-                    
                 
                 VStack {
                     // Button creation and layout
@@ -138,7 +107,7 @@ struct LegendSelect: View {
                                 HStack {
                                     ForEach(Array(legendNames[index...].enumerated()), id: \.element) { column, name in
                                         if column < 5 {
-                                            LegendButton(legendName: name, size:60, nextPlayer: $nextPlayer, playerSelected: $playerSelected, p1Selected: $p1Selected, p2Selected: $p2Selected, p3Selected: $p3Selected)
+                                            LegendButton(legendName: name, size:60, nextPlayer: $nextPlayer, playerSelected: $playerSelected)
                                         }
                                     }
                                 }
@@ -155,13 +124,26 @@ struct LegendSelect: View {
                     Text(chosenLegend)
                         .font(.title)
                     Button(action: {
-                        rollLegend()
+                        if let rolled = legendNames.randomElement() {
+                            chosenLegend = rolled
+                            legendImage = chosenLegend
+                        }
                     }) {
                         Text("Generate Random Legend")
                             .font(.title3.bold())
                     }
-                    .buttonStyle(BorderlessButtonStyle())
                     .padding()
+                    .background(Color.teal)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    
+                    Button(action: {
+                        chosenLegend = " "
+                        legendImage = "apexlogo"
+                    }) {
+                        Text("Clear Selection")
+                            .font(.title3.bold())
+                    }
                     .background(Color.teal)
                     .foregroundColor(.white)
                     .cornerRadius(8)
