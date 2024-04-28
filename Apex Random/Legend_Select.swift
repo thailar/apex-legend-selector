@@ -8,7 +8,7 @@
 import SwiftUI
 
 let legendNames = [
-    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Mirage", "Ash"
+    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Alter"
 ]
 
 struct LegendButton: View {
@@ -42,10 +42,9 @@ struct LegendButton: View {
             Image(legendName)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(maxWidth: size, maxHeight: size)
-                //.scaleEffect(0.6)
-                //.background(Color.gray)
-                //.clipped()
+                .frame(maxWidth: size, maxHeight: size, alignment: .bottom)
+                .background(Color.gray.opacity(0.3))
+                .clipped()
                 .border(highlight, width: 5)
         }
     }
@@ -110,52 +109,52 @@ struct LegendSelect: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                // Button creation and layout
-                VStack (alignment: .leading) {
-                    ForEach(Array(legendNames.enumerated()), id: \.element) { index, name in
-                        if index % 5 == 0 {
-                            HStack {
-                                ForEach(Array(legendNames[index...index+4].enumerated()), id: \.element) { column, name in
-                                    //fix this and beyond
-                                    if column <= (legendNames.count - 1) % 5 && index <= legendNames.count {
-                                        LegendButton(legendName: name, selector: selector, size:60)
-                                    }
-                                }
-                            }
-                            //.padding(shift)
-                        }
-                    }
-                }
-
-                Spacer()
-                Image(legendImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
-                Text(chosenLegend)
-                    .font(.title)
-                Button(action: {
-                    rollLegend()
-                }) {
-                    Text("Generate Random Legend")
-                        .font(.title3.bold())
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .padding()
-                .background(Color.teal)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background(
+            ZStack {
                 Image("banner")
                     .resizable()
-                    .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-                    //.scaledToFill()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geometry.size.width)
                     .ignoresSafeArea()
-            )
-            //.background(Color.gray.opacity(0.35).ignoresSafeArea())
+                    .background(Color.gray.opacity(0.35))
+                    
+                
+                VStack {
+                    // Button creation and layout
+                    VStack (alignment: .leading) {
+                        ForEach(Array(legendNames.enumerated()), id: \.element) { index, name in
+                            if index % 5 == 0 {
+                                HStack {
+                                    ForEach(Array(legendNames[index...].enumerated()), id: \.element) { column, name in
+                                        if column < 5 {
+                                            LegendButton(legendName: name, selector: selector, size:60)
+                                        }
+                                    }
+                                }
+                                .padding(index % 2 == 0 ? .trailing : .leading)
+                            }
+                        }
+                    }
+
+                    Spacer()
+                    Image(legendImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
+                    Text(chosenLegend)
+                        .font(.title)
+                    Button(action: {
+                        rollLegend()
+                    }) {
+                        Text("Generate Random Legend")
+                            .font(.title3.bold())
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .padding()
+                    .background(Color.teal)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }
+            }
         }
     }
 }
