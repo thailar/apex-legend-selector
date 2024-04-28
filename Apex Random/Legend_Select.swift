@@ -12,21 +12,45 @@ let legendNames = [
 ]
 
 struct LegendButton: View {
-    let legendName:String
+    let legendName: String
     let size: CGFloat
-    var selector: selectionController
     @State var highlight = Color.clear
     @State var selectedByPlayer = 0
-    
-    func tap() {
-        //highlight if not selected, deselect if already selected
+    @Binding var nextPlayer: Int
+    @Binding var playerSelected: [Bool]
+    @Binding var p1Selected: Bool
+    @Binding var p2Selected: Bool
+    @Binding var p3Selected: Bool
+    func changeNextPlayer() {
+        switch selectedByPlayer {
+        case 1: playerSelected[0].toggle()
+        case 2: playerSelected[1].toggle()
+        case 3: playerSelected[2].toggle()
+        default: return
+        }
         
-        if selectedByPlayer == 0 {
-            selectedByPlayer = selector.nextPlayer
-            selector.changeNextPlayer(toggledPlayer: selectedByPlayer)
+        if !playerSelected[0] {
+            nextPlayer = 1
+        }
+        else if !playerSelected[1] {
+            nextPlayer = 2
+        }
+        else if !playerSelected[2] {
+            nextPlayer = 3
         }
         else {
-            selector.changeNextPlayer(toggledPlayer: selectedByPlayer)
+            nextPlayer = 0
+        }
+    }
+    
+    func tap() {
+        //highlights if not selected, deselect if already selected
+        if selectedByPlayer == 0 {
+            selectedByPlayer = nextPlayer
+            changeNextPlayer()
+        }
+        else {
+            changeNextPlayer()
             selectedByPlayer = 0
         }
         switch selectedByPlayer {
@@ -36,7 +60,6 @@ struct LegendButton: View {
             default: highlight = Color.clear
         }
     }
-    // make color array for background button colors?
     var body: some View {
         Button(action: tap) {
             Image(legendName)
@@ -48,21 +71,20 @@ struct LegendButton: View {
                 .border(highlight, width: 5)
         }
     }
-    init(legendName: String, selector: selectionController, size: CGFloat) {
-        self.size = size
-        self.legendName = legendName
-        self.selector = selector
-    }
 }
 
-class selectionController {
-    var p1Selected = false
-    var p2Selected = false
-    var p3Selected = false
-    var nextPlayer = 1
+struct LegendSelect: View {
+
+    @State var chosenLegend = " "
+    @State var legendImage = "apexlogo"
+    @State var legendPadding = 50.0
+    @State var playerSelected = [false, false, false]
+    @State var p1Selected = false
+    @State var p2Selected = false
+    @State var p3Selected = false
+    @State var nextPlayer = 1
     
-    func changeNextPlayer(toggledPlayer:Int) {
-        
+    mutating func changeNextPlayer(toggledPlayer: Int) {
         switch toggledPlayer {
         case 1: p1Selected.toggle()
         case 2: p2Selected.toggle()
@@ -83,16 +105,6 @@ class selectionController {
             nextPlayer = 0
         }
     }
-}
-
-struct LegendSelect: View {
-
-    @State var chosenLegend = " "
-    @State var legendImage = "apexlogo"
-    @State var legendPadding = 50.0
-    var shiftRowLeft = false
-    var shift:Edge.Set { shiftRowLeft ? .trailing : .leading }
-    var selector = selectionController()
     
     func rollLegend() {
         if let rolled = legendNames.randomElement() {
@@ -126,7 +138,7 @@ struct LegendSelect: View {
                                 HStack {
                                     ForEach(Array(legendNames[index...].enumerated()), id: \.element) { column, name in
                                         if column < 5 {
-                                            LegendButton(legendName: name, selector: selector, size:60)
+                                            LegendButton(legendName: name, size:60, nextPlayer: $nextPlayer, playerSelected: $playerSelected, p1Selected: $p1Selected, p2Selected: $p2Selected, p3Selected: $p3Selected)
                                         }
                                     }
                                 }
