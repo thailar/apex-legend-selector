@@ -7,56 +7,16 @@
 
 import SwiftUI
 
-let legendNames = [
-    "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Alter"
-]
-
 struct LegendButton: View {
+    let legendNumber:Int
+    var toggleLegend: (Int) -> Void
     let size: CGFloat
     var legendName: String
-    @Binding var nextPlayer: Int
-    @Binding var playerSelected: [Bool]
     @Binding var highlight: Color
     @Binding var selectedByPlayer: Int
     
-    func changeNextPlayer() {
-        switch selectedByPlayer {
-        case 1: playerSelected[0].toggle()
-        case 2: playerSelected[1].toggle()
-        case 3: playerSelected[2].toggle()
-        default: return
-        }
-        
-        if !playerSelected[0] {
-            nextPlayer = 1
-        }
-        else if !playerSelected[1] {
-            nextPlayer = 2
-        }
-        else if !playerSelected[2] {
-            nextPlayer = 3
-        }
-        else {
-            nextPlayer = 0
-        }
-    }
-    
     func tap() {
-        //highlights if not selected, deselect if already selected
-        if selectedByPlayer == 0 {
-            selectedByPlayer = nextPlayer
-            changeNextPlayer()
-        }
-        else {
-            changeNextPlayer()
-            selectedByPlayer = 0
-        }
-        switch selectedByPlayer {
-            case 1: highlight = Color.yellow
-            case 2: highlight = Color.blue
-            case 3: highlight = Color.green
-            default: highlight = Color.clear
-        }
+           toggleLegend(legendNumber)
     }
     var body: some View {
         Button(action: tap) {
@@ -72,13 +32,22 @@ struct LegendButton: View {
 }
 
 struct LegendSelect: View {
-
+    
+    let legendNames = [
+        "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Alter"
+    ]
+    
+    let playerColors = [Color.clear, Color.yellow, Color.blue, Color.green]
     @State var chosenLegend = " "
     @State var chosenImage = "apexlogo"
-    @State var legendPadding = 50.0
-    @State var playerSelected = [false, false, false]
+    @State var p1Selected = 0
+    @State var p2Selected = 0
+    @State var p3Selected = 0
     @State var nextPlayer = 1
-    @State var buttonHighlight: [Color] = [
+    @State var buttonPlayerSelections: [Int] = [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ]
+    @State var buttonHighlights: [Color] = [
         Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
         Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
         Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
@@ -86,19 +55,43 @@ struct LegendSelect: View {
         Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
         Color.clear
     ]
-    @State var buttonSelectedByPlayer: [Int] = [
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    ]
     
-    func rollLegend() {
-        if let rolled = legendNames.randomElement() {
-            chosenLegend = rolled
+    func toggleLegend(legendNumber: Int) {
+        
+        //sets "selected by" status and highlight
+        if buttonPlayerSelections[legendNumber] == 0 {
+            buttonPlayerSelections[legendNumber] = nextPlayer
+            buttonHighlights[legendNumber] = playerColors[nextPlayer]
         }
         else {
-            chosenLegend = " "
+            buttonPlayerSelections[legendNumber] = 0
+            buttonHighlights[legendNumber] = playerColors[0]
+        }
+        // sets next player
+        if !buttonPlayerSelections.contains(1) {
+            nextPlayer = 1
+        }
+        else if !buttonPlayerSelections.contains(2) {
+            nextPlayer = 2
+        }
+        else if !buttonPlayerSelections.contains(3) {
+            nextPlayer = 3
+        }
+        else {
+            nextPlayer = 0
         }
     }
 
+    func resetPlayer1() {
+        if let index = buttonPlayerSelections.firstIndex(of: 1) {
+            buttonHighlights[index] = playerColors[0]
+            buttonPlayerSelections[index] = 0
+            nextPlayer = 1
+            chosenLegend = " "
+            chosenImage = "apexlogo"
+        }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -112,14 +105,13 @@ struct LegendSelect: View {
                 VStack {
                     // Button creation and layout
                     VStack (alignment: .leading) {
-                        ForEach(Array(legendNames.enumerated()), id: \.element) { index, name in
+                        ForEach(Array(legendNames.enumerated()), id: \.offset) { index, name in
                             if index % 5 == 0 {
                                 HStack {
-                                    ForEach(Array(legendNames[index...].enumerated()), id: \.element) { column, name in
+                                    ForEach(Array(legendNames[index...].enumerated()), id: \.offset) { column, name in
                                         if column < 5 {
-                                            //buttonHighlight.append(Color.clear)
-                                            //buttonSelectedByPlayer.append(0)
-                                            LegendButton(size:60, legendName: name, nextPlayer: $nextPlayer, playerSelected: $playerSelected, highlight: $buttonHighlight[index+column], selectedByPlayer: $buttonSelectedByPlayer[index+column])
+                                            let current = index + column
+                                            LegendButton(legendNumber: (current), toggleLegend: toggleLegend, size: 60, legendName: name, highlight: $buttonHighlights[current], selectedByPlayer: $buttonPlayerSelections[current])
                                         }
                                     }
                                 }
@@ -139,12 +131,11 @@ struct LegendSelect: View {
                         .font(.title)
                     
                     Button(action: {
-                        if let rolled = legendNames.randomElement() {
-                            chosenLegend = rolled
-                            chosenImage = chosenLegend
-                            buttonHighlight[3] = Color.cyan
-                            //print("\(legendButton)")
-                        }
+                        let rolled = Int.random(in:0..<legendNames.count)
+                        chosenLegend = legendNames[rolled]
+                        chosenImage = chosenLegend
+                        resetPlayer1()
+                        toggleLegend(legendNumber: rolled)
                     }) {
                         Text("Generate Random Legend")
                             .font(.title3.bold())
@@ -155,10 +146,9 @@ struct LegendSelect: View {
                     .cornerRadius(8)
                     
                     Button(action: {
-                        chosenLegend = " "
-                        chosenImage = "apexlogo"
+                        resetPlayer1()
                     }) {
-                        Text("Clear Selection")
+                        Text("Reset P1")
                             .font(.title3.bold())
                     }
                     .background(Color.teal)
