@@ -12,13 +12,12 @@ let legendNames = [
 ]
 
 struct LegendButton: View {
-    let legendName: String
     let size: CGFloat
+    var legendName: String
     @Binding var nextPlayer: Int
     @Binding var playerSelected: [Bool]
-    
-    @State var highlight = Color.clear
-    @State var selectedByPlayer = 0
+    @Binding var highlight: Color
+    @Binding var selectedByPlayer: Int
     
     func changeNextPlayer() {
         switch selectedByPlayer {
@@ -75,10 +74,21 @@ struct LegendButton: View {
 struct LegendSelect: View {
 
     @State var chosenLegend = " "
-    @State var legendImage = " "
+    @State var chosenImage = "apexlogo"
     @State var legendPadding = 50.0
     @State var playerSelected = [false, false, false]
     @State var nextPlayer = 1
+    @State var buttonHighlight: [Color] = [
+        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
+        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
+        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
+        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
+        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
+        Color.clear
+    ]
+    @State var buttonSelectedByPlayer: [Int] = [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ]
     
     func rollLegend() {
         if let rolled = legendNames.randomElement() {
@@ -107,7 +117,9 @@ struct LegendSelect: View {
                                 HStack {
                                     ForEach(Array(legendNames[index...].enumerated()), id: \.element) { column, name in
                                         if column < 5 {
-                                            LegendButton(legendName: name, size:60, nextPlayer: $nextPlayer, playerSelected: $playerSelected)
+                                            //buttonHighlight.append(Color.clear)
+                                            //buttonSelectedByPlayer.append(0)
+                                            LegendButton(size:60, legendName: name, nextPlayer: $nextPlayer, playerSelected: $playerSelected, highlight: $buttonHighlight[index+column], selectedByPlayer: $buttonSelectedByPlayer[index+column])
                                         }
                                     }
                                 }
@@ -117,16 +129,21 @@ struct LegendSelect: View {
                     }
 
                     Spacer()
-                    Image(legendImage)
+                    
+                    Image(chosenImage)
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
+                    
                     Text(chosenLegend)
                         .font(.title)
+                    
                     Button(action: {
                         if let rolled = legendNames.randomElement() {
                             chosenLegend = rolled
-                            legendImage = chosenLegend
+                            chosenImage = chosenLegend
+                            buttonHighlight[3] = Color.cyan
+                            //print("\(legendButton)")
                         }
                     }) {
                         Text("Generate Random Legend")
@@ -139,7 +156,7 @@ struct LegendSelect: View {
                     
                     Button(action: {
                         chosenLegend = " "
-                        legendImage = "apexlogo"
+                        chosenImage = "apexlogo"
                     }) {
                         Text("Clear Selection")
                             .font(.title3.bold())
