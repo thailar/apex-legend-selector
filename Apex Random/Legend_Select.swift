@@ -35,46 +35,33 @@ struct LegendSelect: View {
     let legendNames = [
         "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Alter"
     ]
-    let playerColors = [Color.clear, Color.yellow, Color.blue, Color.green]
-    @State var rolledLegend = " "
-    @State var rolledImage = "apexlogo"
+    let playerColors = [Color.yellow, Color.blue, Color.green]
     @State var nextPlayer = 1
-    @State var buttonPlayerSelections: [Int]
     @State var buttonHighlights: [Color]
+    @State var playerSelections: [Int] = [-1,-1,-1]
     
     func toggleLegend(legendNumber: Int) {
-        
-        //sets "selected by" status and highlight
-        if buttonPlayerSelections[legendNumber] == 0 {
-            buttonPlayerSelections[legendNumber] = nextPlayer
-            buttonHighlights[legendNumber] = playerColors[nextPlayer]
-        }
-        else {
-            buttonPlayerSelections[legendNumber] = 0
-            buttonHighlights[legendNumber] = playerColors[0]
-        }
-        // sets next player
-        if !buttonPlayerSelections.contains(1) {
-            nextPlayer = 1
-        }
-        else if !buttonPlayerSelections.contains(2) {
-            nextPlayer = 2
-        }
-        else if !buttonPlayerSelections.contains(3) {
-            nextPlayer = 3
-        }
-        else {
-            nextPlayer = 0
+        if let alreadySelected = playerSelections.firstIndex(of: legendNumber) {
+            playerSelections[alreadySelected] = -1
+            buttonHighlights[legendNumber] = Color.clear
+        } else {
+            if playerSelections[0] == -1 {
+                playerSelections[0] = legendNumber
+                buttonHighlights[legendNumber] = playerColors[0]
+            } else if playerSelections[1] == -1 {
+                playerSelections[1] = legendNumber
+                buttonHighlights[legendNumber] = playerColors[1]
+            } else if playerSelections[2] == -1 {
+                playerSelections[2] = legendNumber
+                buttonHighlights[legendNumber] = playerColors[2]
+            }
         }
     }
 
-    func resetPlayer1() {
-        if let index = buttonPlayerSelections.firstIndex(of: 1) {
-            buttonHighlights[index] = playerColors[0]
-            buttonPlayerSelections[index] = 0
-            nextPlayer = 1
-            rolledLegend = " "
-            rolledImage = "apexlogo"
+    func resetPlayer(_ player:Int) {
+        if playerSelections[player] != -1 {
+            buttonHighlights[playerSelections[player]] = Color.clear
+            playerSelections[player] = -1
         }
     }
     
@@ -108,36 +95,45 @@ struct LegendSelect: View {
 
                     Spacer()
                     
-                    Image(rolledImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
+                    Image({
+                        playerSelections[0] == -1 ? "apexlogo" : legendNames[playerSelections[0]]
+                    }())
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
                     
-                    Text(rolledLegend)
+                    Text({
+                            playerSelections[0] == -1 ? " " : legendNames[playerSelections[0]]
+                        }())
                         .font(.title)
-                    
+
                     Button(action: {
-                        let rolled = Int.random(in:0..<legendNames.count)
-                        resetPlayer1()
+                        var rolled = Int.random(in:0..<legendNames.count)
+                        while playerSelections.contains(rolled) {
+                            rolled = Int.random(in:0..<legendNames.count)
+                        }
+                        resetPlayer(0)
                         toggleLegend(legendNumber: rolled)
-                        rolledLegend = legendNames[rolled]
-                        rolledImage = rolledLegend
                     }) {
-                        Text("Generate Random Legend")
+                        Text(" Random ")
                             .font(.title3.bold())
                     }
-                    .padding()
+                    .padding(14)
                     .background(Color.teal)
                     .foregroundColor(.white)
                     .cornerRadius(8)
+                    .padding(.bottom)
                     
                     Button(action: {
-                        resetPlayer1()
+                        resetPlayer(0)
+                        resetPlayer(1)
+                        resetPlayer(2)
                     }) {
-                        Text("Reset P1")
+                        Text("Clear Selections")
                             .font(.title3.bold())
                     }
-                    .background(Color.teal)
+                    .padding(5)
+                    .background(Color.teal.opacity(0.7))
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
@@ -145,7 +141,6 @@ struct LegendSelect: View {
         }
     }
     init() {
-        _buttonPlayerSelections = State(initialValue: Array(repeating: 0, count: legendNames.count))
         _buttonHighlights = State(initialValue: Array(repeating: Color.clear, count: legendNames.count))
     }
 }
