@@ -13,7 +13,6 @@ struct LegendButton: View {
     let size: CGFloat
     var legendName: String
     @Binding var highlight: Color
-    @Binding var selectedByPlayer: Int
     
     func tap() {
            toggleLegend(legendNumber)
@@ -36,10 +35,9 @@ struct LegendSelect: View {
     let legendNames = [
         "Ash", "Ballistic", "Bangalore", "Bloodhound", "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar", "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle", "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Valkyrie", "Vantage", "Wattson", "Wraith", "Alter"
     ]
-    
     let playerColors = [Color.clear, Color.yellow, Color.blue, Color.green]
-    @State var chosenLegend = " "
-    @State var chosenImage = "apexlogo"
+    @State var rolledLegend = " "
+    @State var rolledImage = "apexlogo"
     @State var nextPlayer = 1
     @State var buttonPlayerSelections: [Int]
     @State var buttonHighlights: [Color]
@@ -75,8 +73,8 @@ struct LegendSelect: View {
             buttonHighlights[index] = playerColors[0]
             buttonPlayerSelections[index] = 0
             nextPlayer = 1
-            chosenLegend = " "
-            chosenImage = "apexlogo"
+            rolledLegend = " "
+            rolledImage = "apexlogo"
         }
     }
     
@@ -99,7 +97,7 @@ struct LegendSelect: View {
                                     ForEach(Array(legendNames[index...].enumerated()), id: \.offset) { column, name in
                                         if column < 5 {
                                             let current = index + column
-                                            LegendButton(legendNumber: (current), toggleLegend: toggleLegend, size: 60, legendName: name, highlight: $buttonHighlights[current], selectedByPlayer: $buttonPlayerSelections[current])
+                                            LegendButton(legendNumber: (current), toggleLegend: toggleLegend, size: 60, legendName: name, highlight: $buttonHighlights[current])
                                         }
                                     }
                                 }
@@ -110,20 +108,20 @@ struct LegendSelect: View {
 
                     Spacer()
                     
-                    Image(chosenImage)
+                    Image(rolledImage)
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: geometry.size.width/3, maxHeight: geometry.size.width/3)
                     
-                    Text(chosenLegend)
+                    Text(rolledLegend)
                         .font(.title)
                     
                     Button(action: {
                         let rolled = Int.random(in:0..<legendNames.count)
                         resetPlayer1()
                         toggleLegend(legendNumber: rolled)
-                        chosenLegend = legendNames[rolled]
-                        chosenImage = chosenLegend
+                        rolledLegend = legendNames[rolled]
+                        rolledImage = rolledLegend
                     }) {
                         Text("Generate Random Legend")
                             .font(.title3.bold())
