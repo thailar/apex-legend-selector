@@ -40,21 +40,9 @@ struct LegendSelect: View {
     let playerColors = [Color.clear, Color.yellow, Color.blue, Color.green]
     @State var chosenLegend = " "
     @State var chosenImage = "apexlogo"
-    @State var p1Selected = 0
-    @State var p2Selected = 0
-    @State var p3Selected = 0
     @State var nextPlayer = 1
-    @State var buttonPlayerSelections: [Int] = [
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    ]
-    @State var buttonHighlights: [Color] = [
-        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
-        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
-        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
-        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
-        Color.clear, Color.clear, Color.clear, Color.clear, Color.clear,
-        Color.clear
-    ]
+    @State var buttonPlayerSelections: [Int]
+    @State var buttonHighlights: [Color]
     
     func toggleLegend(legendNumber: Int) {
         
@@ -132,10 +120,10 @@ struct LegendSelect: View {
                     
                     Button(action: {
                         let rolled = Int.random(in:0..<legendNames.count)
-                        chosenLegend = legendNames[rolled]
-                        chosenImage = chosenLegend
                         resetPlayer1()
                         toggleLegend(legendNumber: rolled)
+                        chosenLegend = legendNames[rolled]
+                        chosenImage = chosenLegend
                     }) {
                         Text("Generate Random Legend")
                             .font(.title3.bold())
@@ -157,6 +145,10 @@ struct LegendSelect: View {
                 }
             }
         }
+    }
+    init() {
+        _buttonPlayerSelections = State(initialValue: Array(repeating: 0, count: legendNames.count))
+        _buttonHighlights = State(initialValue: Array(repeating: Color.clear, count: legendNames.count))
     }
 }
 
