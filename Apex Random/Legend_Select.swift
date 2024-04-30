@@ -15,7 +15,7 @@ struct LegendButton: View {
     @Binding var highlight: Color
     
     func tap() {
-           toggleLegend(legendNumber)
+        toggleLegend(legendNumber)
     }
     var body: some View {
         Button(action: tap) {
@@ -84,7 +84,7 @@ struct LegendSelect: View {
                                     ForEach(Array(legendNames[index...].enumerated()), id: \.offset) { column, name in
                                         if column < 5 {
                                             let current = index + column
-                                            LegendButton(legendNumber: (current), toggleLegend: toggleLegend, size: 60, legendName: name, highlight: $buttonHighlights[current])
+                                            LegendButton(legendNumber: current, toggleLegend: toggleLegend, size: 60, legendName: name, highlight: $buttonHighlights[current])
                                         }
                                     }
                                 }
