@@ -69,12 +69,12 @@ struct LegendSelect: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image("banner")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width)
-                    .ignoresSafeArea()
-                    .background(Color.gray.opacity(0.35))
+//                Image("banner")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fill)
+//                    .frame(width: geometry.size.width)
+//                    .ignoresSafeArea()
+//                    .background(Color.gray.opacity(0.35))
                 
                 VStack {
                     // Button creation and layout
@@ -95,7 +95,39 @@ struct LegendSelect: View {
                     }
 
                     Spacer()
-                    
+                    HStack() {
+                        Spacer()
+                        Spacer()
+                        VStack() {
+                            Image({
+                                playerSelections[1] == -1 ? "apexlogo" : legendNames[playerSelections[1]]
+                            }())
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: geometry.size.width/6, height: geometry.size.width/6)
+                            .border(.blue, width: 5)
+                            
+                            Text({
+                                    playerSelections[1] == -1 ? " " : legendNames[playerSelections[1]]
+                                }())
+                        }
+                        Spacer()
+                        VStack() {
+                            Image({
+                                playerSelections[2] == -1 ? "apexlogo" : legendNames[playerSelections[2]]
+                            }())
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: geometry.size.width/6, height: geometry.size.width/6)
+                            .border(.green, width: 5)
+                            
+                            Text({
+                                    playerSelections[2] == -1 ? " " : legendNames[playerSelections[2]]
+                                }())
+                        }
+                        Spacer()
+                        Spacer()
+                    }
                     Image({
                         playerSelections[0] == -1 ? "apexlogo" : legendNames[playerSelections[0]]
                     }())
@@ -139,7 +171,7 @@ struct LegendSelect: View {
                     .cornerRadius(8)
                 }
             }
-        }
+        }.background(.gray.opacity(0.1))
     }
     init() {
         _buttonHighlights = State(initialValue: Array(repeating: Color.clear, count: legendNames.count))
