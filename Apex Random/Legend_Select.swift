@@ -58,9 +58,6 @@ struct LegendSelect: View {
             }
         }
     }
-    /*func toggleLegend(legendNumber: Int, allowP1Set: Bool = false) {
-        
-    }*/
 
     func resetPlayer(_ player:Int) {
         if playerSelections[player] != -1 {
