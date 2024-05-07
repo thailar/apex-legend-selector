@@ -9,13 +9,13 @@ import SwiftUI
 
 struct LegendButton: View {
     let legendNumber:Int
-    var toggleLegend: (Int) -> Void
+    let toggleLegend: (Int, Bool) -> Void
     let size: CGFloat
     var legendName: String
     @Binding var highlight: Color
     
     func tap() {
-           toggleLegend(legendNumber)
+        toggleLegend(legendNumber, false)
     }
     var body: some View {
         Button(action: tap) {
@@ -40,12 +40,13 @@ struct LegendSelect: View {
     @State var buttonHighlights: [Color]
     @State var playerSelections: [Int] = [-1,-1,-1]
     
-    func toggleLegend(legendNumber: Int) {
+    // Add hidden and optional "allowP1Set" paramet that defaults to false to allow random button to set p1
+    func toggleLegend(legendNumber: Int, allowP1Set: Bool = false) {
         if let alreadySelected = playerSelections.firstIndex(of: legendNumber) {
             playerSelections[alreadySelected] = -1
             buttonHighlights[legendNumber] = Color.clear
         } else {
-            if playerSelections[0] == -1 {
+            if playerSelections[0] == -1 && allowP1Set {
                 playerSelections[0] = legendNumber
                 buttonHighlights[legendNumber] = playerColors[0]
             } else if playerSelections[1] == -1 {
@@ -57,6 +58,9 @@ struct LegendSelect: View {
             }
         }
     }
+    /*func toggleLegend(legendNumber: Int, allowP1Set: Bool = false) {
+        
+    }*/
 
     func resetPlayer(_ player:Int) {
         if playerSelections[player] != -1 {
@@ -113,7 +117,7 @@ struct LegendSelect: View {
                             rolled = Int.random(in:0..<legendNames.count)
                         }
                         resetPlayer(0)
-                        toggleLegend(legendNumber: rolled)
+                        toggleLegend(legendNumber: rolled, allowP1Set: true)
                     }) {
                         Text(" Random ")
                             .font(.title3.bold())
